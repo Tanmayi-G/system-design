@@ -1,4 +1,5 @@
 package game;
 
-public class Board {
+public abstract class Board {
+    public abstract void play(Move move);
 }
