@@ -1,10 +1,7 @@
 package api;
 
 import boards.TicTacToeBoard;
-import game.Board;
-import game.GameState;
-import game.Move;
-import game.Player;
+import game.*;
 
 public class GameEngine {
 
@@ -31,12 +28,16 @@ public class GameEngine {
             String firstCharacter = "-";
 
             // check rows
-            boolean rowComplete = true;
+            boolean rowComplete = false;
             for(int i=0;i<3;i++){
-                rowComplete = true;
                 firstCharacter = ticTacToeBoard.getCell(i, 0);
+                if(firstCharacter == null){
+                    rowComplete = false;
+                    continue;
+                }
+                rowComplete = true;
                 for(int j=1;j<3;j++){
-                    if(!ticTacToeBoard.getCell(i, j).equals(firstCharacter)){
+                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, j))) {
                         rowComplete = false;
                         break;
                     }
@@ -44,17 +45,21 @@ public class GameEngine {
                 if(rowComplete) break;
             }
 
-            if(rowComplete){
+            if(rowComplete) {
                 return new GameState(true, firstCharacter);
             }
 
             // check cols
-            boolean colComplete = true;
+            boolean colComplete = false;
             for(int j=0;j<3;j++){
-                colComplete = true;
                 firstCharacter = ticTacToeBoard.getCell(0, j);
+                if(firstCharacter == null) {
+                    colComplete = false;
+                    continue;
+                }
+                colComplete = true;
                 for(int i=1;i<3;i++){
-                    if(!ticTacToeBoard.getCell(i, j).equals(firstCharacter)){
+                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, j))) {
                         colComplete = false;
                         break;
                     }
@@ -62,35 +67,41 @@ public class GameEngine {
                 if(colComplete) break;
             }
 
-            if(colComplete){
+            if(colComplete) {
                 return new GameState(true, firstCharacter);
             }
 
             // check left-right diagonal
-            boolean leftRightDiagComplete = true;
+            boolean leftRightDiagComplete = false;
             firstCharacter = ticTacToeBoard.getCell(0, 0);
-            for(int i=1;i<3;i++){
-                if(!ticTacToeBoard.getCell(i, i).equals(firstCharacter)) {
-                    leftRightDiagComplete = false;
-                    break;
+            if(firstCharacter != null) {
+                leftRightDiagComplete = true;
+                for(int i=1;i<3;i++){
+                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, i))) {
+                        leftRightDiagComplete = false;
+                        break;
+                    }
                 }
             }
 
-            if(leftRightDiagComplete){
+            if(leftRightDiagComplete) {
                 return new GameState(true, firstCharacter);
             }
 
             // check right-left diagonal
-            boolean rightLeftDiagComplete = true;
+            boolean rightLeftDiagComplete = false;
             firstCharacter = ticTacToeBoard.getCell(0, 2);
-            for(int i=1;i<3;i++){
-                if(!ticTacToeBoard.getCell(2-i, 2-i).equals(firstCharacter)){
-                    rightLeftDiagComplete = false;
-                    break;
+            if(firstCharacter != null) {
+                rightLeftDiagComplete = true;
+                for(int i=1;i<3;i++){
+                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, 2-i))) {
+                        rightLeftDiagComplete = false;
+                        break;
+                    }
                 }
             }
 
-            if(rightLeftDiagComplete){
+            if(rightLeftDiagComplete) {
                 return new GameState(true, firstCharacter);
             }
 
@@ -111,5 +122,21 @@ public class GameEngine {
         }
 
         return new GameState(false, "-");
+    }
+
+    public Move suggestMove(Board board, Player player){
+        if(board instanceof TicTacToeBoard) {
+            TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
+            for(int i=0;i<3;i++){
+                for(int j=0;j<3;j++){
+                    if(ticTacToeBoard.getCell(i,j) == null){
+                        return new Move(new Cell(i,j));
+                    }
+                }
+            }
+            throw new IllegalStateException();
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
 }

@@ -3,7 +3,7 @@ package game;
 public class Player {
     private String playerSymbol;
 
-    Player(String playerSymbol){
+    public Player(String playerSymbol){
         this.playerSymbol = playerSymbol;
     }
 
