@@ -8,12 +8,21 @@ import game.Player;
 
 public class GameEngine {
 
-    public Board start(){
-        return new Board();
+    public Board start(String type){
+        if(type.equals("TicTacToe")){
+            return new TicTacToeBoard();
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
 
     public void play(Board board, Player player, Move move){
-
+        if(board instanceof TicTacToeBoard){
+            TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
+            ticTacToeBoard.setCell(player.getSymbol(), move.getCell());
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
 
     public GameState checkGameState(Board board){
@@ -25,9 +34,9 @@ public class GameEngine {
             boolean rowComplete = true;
             for(int i=0;i<3;i++){
                 rowComplete = true;
-                firstCharacter = ticTacToeBoard.cells[i][0];
+                firstCharacter = ticTacToeBoard.getCell(i, 0);
                 for(int j=1;j<3;j++){
-                    if(!ticTacToeBoard.cells[i][j].equals(firstCharacter)){
+                    if(!ticTacToeBoard.getCell(i, j).equals(firstCharacter)){
                         rowComplete = false;
                         break;
                     }
@@ -43,9 +52,9 @@ public class GameEngine {
             boolean colComplete = true;
             for(int j=0;j<3;j++){
                 colComplete = true;
-                firstCharacter = ticTacToeBoard.cells[0][j];
+                firstCharacter = ticTacToeBoard.getCell(0, j);
                 for(int i=1;i<3;i++){
-                    if(!ticTacToeBoard.cells[i][j].equals(firstCharacter)){
+                    if(!ticTacToeBoard.getCell(i, j).equals(firstCharacter)){
                         colComplete = false;
                         break;
                     }
@@ -59,9 +68,9 @@ public class GameEngine {
 
             // check left-right diagonal
             boolean leftRightDiagComplete = true;
-            firstCharacter = ticTacToeBoard.cells[0][0];
+            firstCharacter = ticTacToeBoard.getCell(0, 0);
             for(int i=1;i<3;i++){
-                if(!ticTacToeBoard.cells[i][i].equals(firstCharacter)) {
+                if(!ticTacToeBoard.getCell(i, i).equals(firstCharacter)) {
                     leftRightDiagComplete = false;
                     break;
                 }
@@ -73,9 +82,9 @@ public class GameEngine {
 
             // check right-left diagonal
             boolean rightLeftDiagComplete = true;
-            firstCharacter = ticTacToeBoard.cells[0][2];
+            firstCharacter = ticTacToeBoard.getCell(0, 2);
             for(int i=1;i<3;i++){
-                if(!ticTacToeBoard.cells[2-i][2-i].equals(firstCharacter)){
+                if(!ticTacToeBoard.getCell(2-i, 2-i).equals(firstCharacter)){
                     rightLeftDiagComplete = false;
                     break;
                 }
@@ -88,7 +97,7 @@ public class GameEngine {
             int count = 0;
             for(int i=0;i<3;i++){
                 for(int j=0;j<3;j++){
-                    if(ticTacToeBoard.cells[i][j] != null){
+                    if(ticTacToeBoard.getCell(i, j) != null){
                         count++;
                     }
                 }
