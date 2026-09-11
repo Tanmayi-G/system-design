@@ -1,8 +1,8 @@
-package main.java.api;
+package api;
 
-import main.java.boards.TicTacToeBoard;
-import main.java.game.Board;
-import main.java.game.GameState;
+import boards.TicTacToeBoard;
+import game.Board;
+import game.GameState;
 
 public class RuleEngine {
     public GameState checkGameState(Board board){

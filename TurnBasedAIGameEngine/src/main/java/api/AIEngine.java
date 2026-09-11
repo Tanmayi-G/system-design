@@ -1,7 +1,7 @@
-package main.java.api;
+package api;
 
-import main.java.boards.TicTacToeBoard;
-import main.java.game.*;
+import boards.TicTacToeBoard;
+import game.*;
 
 public class AIEngine {
 
