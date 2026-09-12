@@ -10,4 +10,9 @@ public class Player {
     public String getSymbol(){
         return this.playerSymbol;
     }
+
+    // Prototype design pattern
+    public Player flip(){
+        return new Player(playerSymbol.equals("X") ? "O" : "X");
+    }
 }

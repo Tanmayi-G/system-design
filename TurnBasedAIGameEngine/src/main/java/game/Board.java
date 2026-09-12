@@ -1,5 +1,7 @@
 package game;
 
-public abstract class Board {
-    public abstract void play(Move move);
+public interface Board {
+    void play(Move move);
+
+    Board copy();
 }

@@ -13,14 +13,14 @@ public class RuleEngine {
             // check rows
             boolean rowComplete = false;
             for(int i=0;i<3;i++){
-                firstCharacter = ticTacToeBoard.getCell(i, 0);
+                firstCharacter = ticTacToeBoard.getCellSymbol(i, 0);
                 if(firstCharacter == null){
                     rowComplete = false;
                     continue;
                 }
                 rowComplete = true;
                 for(int j=1;j<3;j++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, j))) {
+                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, j))) {
                         rowComplete = false;
                         break;
                     }
@@ -35,14 +35,14 @@ public class RuleEngine {
             // check cols
             boolean colComplete = false;
             for(int j=0;j<3;j++){
-                firstCharacter = ticTacToeBoard.getCell(0, j);
+                firstCharacter = ticTacToeBoard.getCellSymbol(0, j);
                 if(firstCharacter == null) {
                     colComplete = false;
                     continue;
                 }
                 colComplete = true;
                 for(int i=1;i<3;i++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, j))) {
+                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, j))) {
                         colComplete = false;
                         break;
                     }
@@ -56,11 +56,11 @@ public class RuleEngine {
 
             // check left-right diagonal
             boolean leftRightDiagComplete = false;
-            firstCharacter = ticTacToeBoard.getCell(0, 0);
+            firstCharacter = ticTacToeBoard.getCellSymbol(0, 0);
             if(firstCharacter != null) {
                 leftRightDiagComplete = true;
                 for(int i=1;i<3;i++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, i))) {
+                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, i))) {
                         leftRightDiagComplete = false;
                         break;
                     }
@@ -73,11 +73,11 @@ public class RuleEngine {
 
             // check right-left diagonal
             boolean rightLeftDiagComplete = false;
-            firstCharacter = ticTacToeBoard.getCell(0, 2);
+            firstCharacter = ticTacToeBoard.getCellSymbol(0, 2);
             if(firstCharacter != null) {
                 rightLeftDiagComplete = true;
                 for(int i=1;i<3;i++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCell(i, 2-i))) {
+                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, 2-i))) {
                         rightLeftDiagComplete = false;
                         break;
                     }
@@ -91,7 +91,7 @@ public class RuleEngine {
             int count = 0;
             for(int i=0;i<3;i++){
                 for(int j=0;j<3;j++){
-                    if(ticTacToeBoard.getCell(i, j) != null){
+                    if(ticTacToeBoard.getCellSymbol(i, j) != null){
                         count++;
                     }
                 }
