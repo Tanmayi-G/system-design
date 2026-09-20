@@ -88,6 +88,7 @@ public class RuleEngine {
                 return new GameState(true, firstCharacter);
             }
 
+            // check for tie
             int count = 0;
             for(int i=0;i<3;i++){
                 for(int j=0;j<3;j++){
@@ -98,9 +99,9 @@ public class RuleEngine {
             }
 
             if(count==9){
-                return new GameState(true, "-");
+                return new GameState(true, "-"); //tie
             }else{
-                return new GameState(false, "-");
+                return new GameState(false, "-"); //continue game
             }
         }
 
