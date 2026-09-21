@@ -25,11 +25,9 @@ public class RuleEngine {
                         break;
                     }
                 }
-                if(rowComplete) break;
-            }
-
-            if(rowComplete) {
-                return new GameState(true, firstCharacter);
+                if(rowComplete){
+                    return new GameState(true, firstCharacter);
+                }
             }
 
             // check cols
@@ -47,11 +45,9 @@ public class RuleEngine {
                         break;
                     }
                 }
-                if(colComplete) break;
-            }
-
-            if(colComplete) {
-                return new GameState(true, firstCharacter);
+                if(colComplete) {
+                    return new GameState(true, firstCharacter);
+                }
             }
 
             // check left-right diagonal
