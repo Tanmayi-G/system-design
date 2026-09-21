@@ -4,48 +4,59 @@ import boards.TicTacToeBoard;
 import game.Board;
 import game.GameState;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 public class RuleEngine {
     public GameState checkGameState(Board board){
         if(board instanceof TicTacToeBoard){
             TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
             String firstCharacter = "-";
 
+            Function<Integer, String> getRow = (i) -> ticTacToeBoard.getCellSymbol(i, 0);
+            Function<Integer, String> getCol = (j) -> ticTacToeBoard.getCellSymbol(0, j);
+            Function<Integer, String> firstCharacterSupplier;
+
+            BiFunction<Integer, Integer, String> getNextRow = (i,j) -> ticTacToeBoard.getCellSymbol(i,j);
+            BiFunction<Integer, Integer, String> getNextCol = (i,j) -> ticTacToeBoard.getCellSymbol(j,i);
+
             // check rows
-            boolean rowComplete = false;
+            firstCharacterSupplier = getRow;
+            boolean isLineComplete = false;
             for(int i=0;i<3;i++){
-                firstCharacter = ticTacToeBoard.getCellSymbol(i, 0);
+                firstCharacter = firstCharacterSupplier.apply(i);
                 if(firstCharacter == null){
-                    rowComplete = false;
+                    isLineComplete = false;
                     continue;
                 }
-                rowComplete = true;
+                isLineComplete = true;
                 for(int j=1;j<3;j++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, j))) {
-                        rowComplete = false;
+                    if(!firstCharacter.equals(getNextRow.apply(i,j))) {
+                        isLineComplete = false;
                         break;
                     }
                 }
-                if(rowComplete){
+                if(isLineComplete){
                     return new GameState(true, firstCharacter);
                 }
             }
 
             // check cols
-            boolean colComplete = false;
-            for(int j=0;j<3;j++){
-                firstCharacter = ticTacToeBoard.getCellSymbol(0, j);
+            firstCharacterSupplier = getCol;
+            for(int i=0;i<3;i++){
+                firstCharacter = firstCharacterSupplier.apply(i);
                 if(firstCharacter == null) {
-                    colComplete = false;
+                    isLineComplete = false;
                     continue;
                 }
-                colComplete = true;
-                for(int i=1;i<3;i++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, j))) {
-                        colComplete = false;
+                isLineComplete = true;
+                for(int j=1;j<3;j++){
+                    if(!firstCharacter.equals(getNextCol.apply(i,j))) {
+                        isLineComplete = false;
                         break;
                     }
                 }
-                if(colComplete) {
+                if(isLineComplete) {
                     return new GameState(true, firstCharacter);
                 }
             }
