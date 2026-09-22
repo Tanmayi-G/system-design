@@ -13,53 +13,13 @@ public class RuleEngine {
             TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
             String firstCharacter = "-";
 
-            Function<Integer, String> getRow = (i) -> ticTacToeBoard.getCellSymbol(i, 0);
-            Function<Integer, String> getCol = (j) -> ticTacToeBoard.getCellSymbol(0, j);
-            Function<Integer, String> firstCharacterSupplier;
-
-            BiFunction<Integer, Integer, String> getNextRow = (i,j) -> ticTacToeBoard.getCellSymbol(i,j);
-            BiFunction<Integer, Integer, String> getNextCol = (i,j) -> ticTacToeBoard.getCellSymbol(j,i);
-
             // check rows
-            firstCharacterSupplier = getRow;
-            boolean isLineComplete = false;
-            for(int i=0;i<3;i++){
-                firstCharacter = firstCharacterSupplier.apply(i);
-                if(firstCharacter == null){
-                    isLineComplete = false;
-                    continue;
-                }
-                isLineComplete = true;
-                for(int j=1;j<3;j++){
-                    if(!firstCharacter.equals(getNextRow.apply(i,j))) {
-                        isLineComplete = false;
-                        break;
-                    }
-                }
-                if(isLineComplete){
-                    return new GameState(true, firstCharacter);
-                }
-            }
+            GameState rowWin = getGameState((i) -> ticTacToeBoard.getCellSymbol(i, 0), (i, j) -> ticTacToeBoard.getCellSymbol(i, j));
+            if (rowWin != null) return rowWin;
 
             // check cols
-            firstCharacterSupplier = getCol;
-            for(int i=0;i<3;i++){
-                firstCharacter = firstCharacterSupplier.apply(i);
-                if(firstCharacter == null) {
-                    isLineComplete = false;
-                    continue;
-                }
-                isLineComplete = true;
-                for(int j=1;j<3;j++){
-                    if(!firstCharacter.equals(getNextCol.apply(i,j))) {
-                        isLineComplete = false;
-                        break;
-                    }
-                }
-                if(isLineComplete) {
-                    return new GameState(true, firstCharacter);
-                }
-            }
+            GameState colWin = getGameState((j) -> ticTacToeBoard.getCellSymbol(0, j), (i, j) -> ticTacToeBoard.getCellSymbol(j, i));
+            if (colWin != null) return colWin;
 
             // check left-right diagonal
             boolean leftRightDiagComplete = false;
@@ -113,6 +73,28 @@ public class RuleEngine {
         }
 
         return new GameState(false, "-");
+    }
+
+    private GameState getGameState(Function<Integer,String> firstCharacterSupplier, BiFunction<Integer,Integer,String> getNextRow) {
+        boolean isLineComplete = false;
+        for (int i = 0; i < 3; i++) {
+            String firstCharacter = firstCharacterSupplier.apply(i);
+            if (firstCharacter == null) {
+                isLineComplete = false;
+                continue;
+            }
+            isLineComplete = true;
+            for (int j = 1; j < 3; j++) {
+                if (!firstCharacter.equals(getNextRow.apply(i, j))) {
+                    isLineComplete = false;
+                    break;
+                }
+            }
+            if (isLineComplete) {
+                return new GameState(true, firstCharacter);
+            }
+        }
+        return null;
     }
 
 }
