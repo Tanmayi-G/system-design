@@ -51,33 +51,30 @@ public class RuleEngine {
 
     // checks whether any diagonal is complete according to the Function
     private GameState checkDiagLine(Function<Integer,String> next) {
-        boolean diagComplete = true;
-        for(int i=0;i<3;i++){
-            if(next.apply(i) == null || !next.apply(0).equals(next.apply(i))) {
-                diagComplete = false;
-                break;
-            }
-        }
-
-        if(diagComplete) {
-            return new GameState(true, next.apply(0));
-        }
-        return null;
+        return traverse(next);
     }
 
     // checks whether any line is complete according to the BiFunction
     private GameState checkLine(BiFunction<Integer,Integer,String> next) {
         for (int i = 0; i < 3; i++) {
-            boolean isLineComplete = true;
-            for (int j = 0; j < 3; j++) {
-                if (next.apply(i,j) == null || !next.apply(i,0).equals(next.apply(i, j))) {
-                    isLineComplete = false;
-                    break;
-                }
+            final int finalI = i;
+
+            GameState traversal = traverse((j) -> next.apply(finalI,j));
+            if (traversal != null) return traversal;
+        }
+        return null;
+    }
+
+    private GameState traverse(Function<Integer,String> traversal) {
+        boolean isLineComplete = true;
+        for (int j = 0; j < 3; j++) {
+            if (traversal.apply(j) == null || !traversal.apply(0).equals(traversal.apply(j))) {
+                isLineComplete = false;
+                break;
             }
-            if (isLineComplete) {
-                return new GameState(true, next.apply(i,0));
-            }
+        }
+        if (isLineComplete) {
+            return new GameState(true, traversal.apply(0));
         }
         return null;
     }
