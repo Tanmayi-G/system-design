@@ -5,7 +5,6 @@ import game.Board;
 import game.GameState;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class RuleEngine {
     public GameState checkGameState(Board board){
@@ -14,11 +13,11 @@ public class RuleEngine {
             String firstCharacter = "-";
 
             // check rows
-            GameState rowWin = isVictory((i, j) -> ticTacToeBoard.getCellSymbol(i, j));
+            GameState rowWin = checkLine((i, j) -> ticTacToeBoard.getCellSymbol(i, j));
             if (rowWin != null) return rowWin;
 
             // check cols
-            GameState colWin = isVictory((i, j) -> ticTacToeBoard.getCellSymbol(j, i));
+            GameState colWin = checkLine((i, j) -> ticTacToeBoard.getCellSymbol(j, i));
             if (colWin != null) return colWin;
 
             // check left-right diagonal
@@ -75,7 +74,8 @@ public class RuleEngine {
         return new GameState(false, "-");
     }
 
-    private GameState isVictory(BiFunction<Integer,Integer,String> next) {
+    // checks whether any line is complete according to the BiFunction
+    private GameState checkLine(BiFunction<Integer,Integer,String> next) {
         for (int i = 0; i < 3; i++) {
             boolean isLineComplete = true;
             for (int j = 0; j < 3; j++) {
@@ -90,5 +90,4 @@ public class RuleEngine {
         }
         return null;
     }
-
 }
