@@ -5,6 +5,7 @@ import game.Board;
 import game.GameState;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class RuleEngine {
     public GameState checkGameState(Board board){
@@ -21,38 +22,12 @@ public class RuleEngine {
             if (colWin != null) return colWin;
 
             // check left-right diagonal
-            boolean leftRightDiagComplete = false;
-            firstCharacter = ticTacToeBoard.getCellSymbol(0, 0);
-            if(firstCharacter != null) {
-                leftRightDiagComplete = true;
-                for(int i=1;i<3;i++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, i))) {
-                        leftRightDiagComplete = false;
-                        break;
-                    }
-                }
-            }
-
-            if(leftRightDiagComplete) {
-                return new GameState(true, firstCharacter);
-            }
+            GameState diagWin = checkDiagLine((i) -> ticTacToeBoard.getCellSymbol(i, i));
+            if (diagWin != null) return diagWin;
 
             // check right-left diagonal
-            boolean rightLeftDiagComplete = false;
-            firstCharacter = ticTacToeBoard.getCellSymbol(0, 2);
-            if(firstCharacter != null) {
-                rightLeftDiagComplete = true;
-                for(int i=1;i<3;i++){
-                    if(!firstCharacter.equals(ticTacToeBoard.getCellSymbol(i, 2-i))) {
-                        rightLeftDiagComplete = false;
-                        break;
-                    }
-                }
-            }
-
-            if(rightLeftDiagComplete) {
-                return new GameState(true, firstCharacter);
-            }
+            GameState revDiagWin = checkDiagLine((i) -> ticTacToeBoard.getCellSymbol(i, 2-i));
+            if (revDiagWin != null) return revDiagWin;
 
             // check for tie
             int count = 0;
@@ -72,6 +47,22 @@ public class RuleEngine {
         }
 
         return new GameState(false, "-");
+    }
+
+    // checks whether any diagonal is complete according to the Function
+    private GameState checkDiagLine(Function<Integer,String> next) {
+        boolean diagComplete = true;
+        for(int i=0;i<3;i++){
+            if(next.apply(i) == null || !next.apply(0).equals(next.apply(i))) {
+                diagComplete = false;
+                break;
+            }
+        }
+
+        if(diagComplete) {
+            return new GameState(true, next.apply(0));
+        }
+        return null;
     }
 
     // checks whether any line is complete according to the BiFunction
