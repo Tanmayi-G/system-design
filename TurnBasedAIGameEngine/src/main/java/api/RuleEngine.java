@@ -91,27 +91,30 @@ public class RuleEngine {
             * -O-
             * X-X
             */
-            for(int i=0;i<3;i++){
-                for(int j=0;j<3;j++){
-                    Board board1 = board.copy();
-                    Player player = new Player("X");
-                    // make move as X
-                    board1.play(new Move(new Cell(i,j), player));
-                    // after making a move as X, if O is still winning, then it's a fork for O
-                    boolean forkDetected = false;
-                    for(int k=0;k<3;k++) {
-                        for (int l = 0; l < 3; l++) {
-                            Board board2 = board1.copy();
-                            board2.play(new Move(new Cell(k,l), new Player("O")));
-                            if(checkGameState(board2).getWinner().equals("O")){
-                                forkDetected = true;
-                                break;
+            String[] players = new String[]{"X", "O"};
+            for(int index = 0; index < 2; index++) {
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        Board board1 = board.copy();
+                        Player player = new Player(players[index]);
+                        // make move as X
+                        board1.play(new Move(new Cell(i, j), player));
+                        // after making a move as X, if O is still winning, then it's a fork for O
+                        boolean forkDetected = false;
+                        for (int k = 0; k < 3; k++) {
+                            for (int l = 0; l < 3; l++) {
+                                Board board2 = board1.copy();
+                                board2.play(new Move(new Cell(k, l), player.flip()));
+                                if (checkGameState(board2).getWinner().equals(player.flip().getSymbol())) {
+                                    forkDetected = true;
+                                    break;
+                                }
                             }
+                            if (forkDetected) break;
                         }
-                        if(forkDetected) break;
-                    }
-                    if(forkDetected){
-                        return new GameInfo(gameState, player, true);
+                        if (forkDetected) {
+                            return new GameInfo(gameState, player.flip(), true);
+                        }
                     }
                 }
             }
@@ -122,16 +125,3 @@ public class RuleEngine {
     }
 }
 
-class GameInfo {
-    private boolean isOver;
-    private String winner;
-    private Player player;
-    private boolean hasFork;
-
-    public GameInfo(GameState gameState, Player player, boolean hasFork) {
-        this.isOver = gameState.isOver();
-        this.winner = gameState.getWinner();
-        this.player = player;
-        this.hasFork = hasFork;
-    }
-}
