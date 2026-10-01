@@ -1,8 +1,7 @@
 package api;
 
 import boards.TicTacToeBoard;
-import game.Board;
-import game.GameState;
+import game.*;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -82,5 +81,57 @@ public class RuleEngine {
             result = new GameState(true, traversal.apply(0));
         }
         return result;
+    }
+
+    public GameInfo getGameInfo(Board board){
+        if(board instanceof TicTacToeBoard){
+            GameState gameState = checkGameState(board);
+            /*
+            * X-O
+            * -O-
+            * X-X
+            */
+            for(int i=0;i<3;i++){
+                for(int j=0;j<3;j++){
+                    Board board1 = board.copy();
+                    Player player = new Player("X");
+                    // make move as X
+                    board1.play(new Move(new Cell(i,j), player));
+                    // after making a move as X, if O is still winning, then it's a fork for O
+                    boolean forkDetected = false;
+                    for(int k=0;k<3;k++) {
+                        for (int l = 0; l < 3; l++) {
+                            Board board2 = board1.copy();
+                            board2.play(new Move(new Cell(k,l), new Player("O")));
+                            if(checkGameState(board2).getWinner().equals("O")){
+                                forkDetected = true;
+                                break;
+                            }
+                        }
+                        if(forkDetected) break;
+                    }
+                    if(forkDetected){
+                        return new GameInfo(gameState, player, true);
+                    }
+                }
+            }
+            return new GameInfo(gameState, null, false);
+        }else{
+            throw new IllegalArgumentException();
+        }
+    }
+}
+
+class GameInfo {
+    private boolean isOver;
+    private String winner;
+    private Player player;
+    private boolean hasFork;
+
+    public GameInfo(GameState gameState, Player player, boolean hasFork) {
+        this.isOver = gameState.isOver();
+        this.winner = gameState.getWinner();
+        this.player = player;
+        this.hasFork = hasFork;
     }
 }
