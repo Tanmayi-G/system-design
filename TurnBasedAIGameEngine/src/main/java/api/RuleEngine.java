@@ -11,7 +11,6 @@ public class RuleEngine {
     public GameState checkGameState(Board board){
         if(board instanceof TicTacToeBoard){
             TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
-            String firstCharacter = "-";
 
             // check rows
             GameState rowWin = outerTraversal((i, j) -> ticTacToeBoard.getCellSymbol(i, j));
