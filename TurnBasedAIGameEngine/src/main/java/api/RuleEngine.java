@@ -130,12 +130,20 @@ public class RuleEngine {
                             if (forkDetected) break;
                         }
                         if (forkDetected) {
-                            return new GameInfo(gameState, player.flip(), true);
+                            return new GameInfoBuilder()
+                                    .isOver(gameState.isOver())
+                                    .winner(gameState.getWinner())
+                                    .hasFork(true)
+                                    .player(player.flip())
+                                    .build();
                         }
                     }
                 }
             }
-            return new GameInfo(gameState, null, false);
+            return new GameInfoBuilder()
+                    .isOver(gameState.isOver())
+                    .winner(gameState.getWinner())
+                    .build();
         }else{
             throw new IllegalArgumentException();
         }
