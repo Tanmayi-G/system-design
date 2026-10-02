@@ -3,48 +3,65 @@ package api;
 import boards.TicTacToeBoard;
 import game.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class RuleEngine {
-    public GameState checkGameState(Board board){
-        if(board instanceof TicTacToeBoard){
-            TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
 
-            // check rows
-            GameState rowWin = outerTraversal((i, j) -> ticTacToeBoard.getCellSymbol(i, j));
-            if (rowWin.isOver()) return rowWin;
+    // maps each board type to the list of rules applicable to it
+    Map<String, List<Rule<TicTacToeBoard>>> ruleMap = new HashMap<>();
 
-            // check cols
-            GameState colWin = outerTraversal((i, j) -> ticTacToeBoard.getCellSymbol(j, i));
-            if (colWin.isOver()) return colWin;
+    public RuleEngine() {
+        ruleMap.put(TicTacToeBoard.class.getName(), new ArrayList<>());
+        List<Rule<TicTacToeBoard>> ticTacToeBoardRules = ruleMap.get(TicTacToeBoard.class.getName());
 
-            // check left-right diagonal
-            GameState diagWin = innerTraversal((i) -> ticTacToeBoard.getCellSymbol(i, i));
-            if (diagWin.isOver()) return diagWin;
+        // Rule 1: check rows
+        ticTacToeBoardRules.add(new Rule<>((board) -> outerTraversal((i, j) -> board.getCellSymbol(i, j))));
 
-            // check right-left diagonal
-            GameState revDiagWin = innerTraversal((i) -> ticTacToeBoard.getCellSymbol(i, 2-i));
-            if (revDiagWin.isOver()) return revDiagWin;
+        // Rule 2: check cols
+        ticTacToeBoardRules.add(new Rule<>((board) -> outerTraversal((i, j) -> board.getCellSymbol(i, j))));
 
-            // check for tie
+        // Rule 3: check left-right diagonal
+        ticTacToeBoardRules.add(new Rule<>((board) -> innerTraversal((i) -> board.getCellSymbol(i, i))));
+
+        // Rule 4: check right-left diagonal
+        ticTacToeBoardRules.add(new Rule<>((board) -> innerTraversal((i) -> board.getCellSymbol(i, 2-i))));
+
+        // Rule 5: check for tie
+        ticTacToeBoardRules.add(new Rule<>((board) -> {
             int count = 0;
             for(int i=0;i<3;i++){
                 for(int j=0;j<3;j++){
-                    if(ticTacToeBoard.getCellSymbol(i, j) != null){
+                    if(board.getCellSymbol(i, j) != null){
                         count++;
                     }
                 }
             }
-
             if(count==9){
                 return new GameState(true, "-"); //tie
-            }else{
-                return new GameState(false, "-"); //continue game
             }
-        }
+            return new GameState(false, "-");
+        }));
+    }
 
-        return new GameState(false, "-");
+    public GameState checkGameState(Board board){
+        if(board instanceof TicTacToeBoard){
+            TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
+            List<Rule<TicTacToeBoard>> rules = ruleMap.get(TicTacToeBoard.class.getName());
+            for(Rule<TicTacToeBoard> rule : rules) {
+                GameState gameState = rule.condition.apply(ticTacToeBoard);
+                if(gameState.isOver()){
+                    return gameState;
+                }
+            }
+            return new GameState(false, "-"); //continue game
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
 
 //    removing this single-line function, using it directly
@@ -124,4 +141,3 @@ public class RuleEngine {
         }
     }
 }
-
